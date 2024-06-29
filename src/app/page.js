@@ -1,95 +1,133 @@
-import Image from "next/image";
+"use client";
 import styles from "./page.module.css";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  let fruitArr = ["멜론", "수박", "망고", "사과", "파인애플"];
+
+  const [arr, setArr] = useState([...fruitArr]);
+  const [selctedValue, setSelectedValue] = useState([]);
+  const [value, setValue] = useState("");
+  const [addValue, setAddValue] = useState("");
+  const [hide, setHide] = useState(true);
+
+  useEffect(() => {
+    localStorage.getItem("fruit");
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("fruit", arr);
+  }, [arr]);
+
+  const onChangeHandler = (e) => {
+    const value = e.target.value;
+    const options = e.target.options;
+
+    setValue(e.target.value);
+    setSelectedValue([value]);
+  };
+
+  const onChangeAdd = (e) => {
+    setAddValue(e.target.value);
+  };
+
+  const onClickHide = () => {
+    setHide(!hide);
+  };
+
+  const onClickAdd = () => {
+    const sameFileter = arr.some((fruit) => fruit === addValue);
+
+    if (sameFileter) {
+      alert("중복!!");
+    } else {
+      setArr([...arr, addValue]);
+      alert("추가됨~~~");
+    }
+  };
+
+  const onClickDelete = () => {
+    if (value !== undefined) {
+      const deleteFilter = arr.filter((fruit) => fruit !== value);
+      setArr(deleteFilter);
+      alert("삭제됨~~");
+    }
+  };
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          하이염~~~~!!!&nbsp;
-          <code className={styles.code}>넥스트 연습중 !!!</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div
+      className={styles.description}
+      style={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "30px",
+      }}
+    >
+      <button onClick={onClickHide}>
+        {hide ? "selected 숨기기" : "selected 보이기"}
+      </button>
+      <div>
+        <br />
+        <br />
+        {hide && (
+          <select
+            style={{ width: "250px", padding: "5px" }}
+            onChange={onChangeHandler}
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+            <option defaultValue="none">=== 선택 ===</option>
+            {arr.map((fruit, i) => (
+              <option key={i} value={fruit}>
+                {fruit}
+              </option>
+            ))}
+          </select>
+        )}
+        <br />
+        <br />
+        <br />
+        <div style={{ fontSize: "18px" }}>선택한 과일 명: {value}</div>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+          marginTop: "30px",
+          border: "1px solid #ccc",
+          padding: "10px",
+        }}
+      >
+        <div>
+          <label htmlFor="add">과일 추가: </label>
+          <input
+            onChange={onChangeAdd}
+            value={addValue}
+            type="text"
+            name="add"
+            style={{ padding: "5px" }}
+          />
+          <button style={{ marginLeft: "10px" }} onClick={onClickAdd}>
+            추가하기
+          </button>
+        </div>
+        <div>
+          <span>과일 삭제: </span>
+          <select onChange={onChangeHandler} style={{ padding: "5px" }}>
+            <option defaultValue="none">=== 선택 ===</option>
+            {arr.map((fruit, i) => (
+              <option key={i} value={fruit}>
+                {fruit}
+              </option>
+            ))}
+          </select>
+          <button style={{ marginLeft: "10px" }} onClick={onClickDelete}>
+            해당 과일 삭제
+          </button>
         </div>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div>
   );
 }
